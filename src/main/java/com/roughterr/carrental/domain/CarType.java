@@ -1,4 +1,4 @@
-package com.roughterr.carrental;
+package com.roughterr.carrental.domain;
 
 /**
  * Car types.
