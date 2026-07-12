@@ -5,17 +5,16 @@ import com.roughterr.carrental.domain.ReservationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 class CarReservationServiceTest {
     private CarReservationService service;
 
     @BeforeEach
     void setUp() {
-        service = new CarReservationService();
+        service = new CarReservationService(new CarInventoryService());
     }
 
     /**
@@ -23,8 +22,7 @@ class CarReservationServiceTest {
      */
     @Test
     void shouldReturnInvalidRequestWhenReturnDateIsBeforePickupDate() {
-        assertInstanceOf(ReservationResult.InvalidCarReservationRequest.class, service.reserveCar(
-                OffsetDateTime.of(2026, 7, 16, 10, 0, 0, 0, ZoneOffset.ofHours(2)),
-                OffsetDateTime.of(2026, 7, 15, 10, 0, 0, 0, ZoneOffset.ofHours(2)), CarType.SEDAN));
+        assertInstanceOf(ReservationResult.InvalidCarReservationRequest.class,
+                service.reserveCar(CarType.SEDAN, Instant.parse("2026-07-16T08:00:00Z"), Instant.parse("2026-07-15T08:00:00Z")));
     }
 }
