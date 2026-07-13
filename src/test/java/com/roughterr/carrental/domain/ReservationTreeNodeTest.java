@@ -55,4 +55,39 @@ class ReservationTreeNodeTest {
         assertSame(firstHalf, node.getFirstHalf());
         assertSame(secondHalf, node.getSecondHalf());
     }
+
+    @Test
+    void shouldSplitNodeIntoTwoEqualHalves() {
+        Instant start = Instant.parse("2026-07-15T08:00:00Z");
+        Instant middle = Instant.parse("2026-07-16T08:00:00Z");
+        Instant end = Instant.parse("2026-07-17T08:00:00Z");
+        ReservationTreeNode node = new ReservationTreeNode(start, end);
+        node.incrementCoveringReservationCount();
+        node.incrementCoveringReservationCount();
+        node.split();
+        ReservationTreeNode firstHalf = node.getFirstHalf();
+        ReservationTreeNode secondHalf = node.getSecondHalf();
+        assertNotNull(firstHalf);
+        assertNotNull(secondHalf);
+        assertEquals(start, firstHalf.getStart());
+        assertEquals(middle, firstHalf.getEnd());
+        assertEquals(middle, secondHalf.getStart());
+        assertEquals(end, secondHalf.getEnd());
+        assertEquals(2, firstHalf.getCoveringReservationCount());
+        assertEquals(2, secondHalf.getCoveringReservationCount());
+    }
+
+    @Test
+    void shouldNotReplaceChildrenWhenNodeIsSplitAgain() {
+        ReservationTreeNode node = new ReservationTreeNode(
+                Instant.parse("2026-07-15T08:00:00Z"),
+                Instant.parse("2026-07-17T08:00:00Z")
+        );
+        node.split();
+        ReservationTreeNode originalFirstHalf = node.getFirstHalf();
+        ReservationTreeNode originalSecondHalf = node.getSecondHalf();
+        node.split();
+        assertSame(originalFirstHalf, node.getFirstHalf());
+        assertSame(originalSecondHalf, node.getSecondHalf());
+    }
 }

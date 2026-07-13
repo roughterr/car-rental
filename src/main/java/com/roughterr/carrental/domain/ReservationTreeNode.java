@@ -1,5 +1,6 @@
 package com.roughterr.carrental.domain;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -89,5 +90,31 @@ public class ReservationTreeNode {
 
     public boolean hasSecondHalf() {
         return secondHalf != null;
+    }
+
+    private Instant getMiddle() {
+        Duration intervalLength = Duration.between(start, end);
+        return start.plus(intervalLength.dividedBy(2));
+    }
+
+    /**
+     * Splits this node into two equal child intervals.
+     *
+     * <p>The current covering reservation count is copied to both children,
+     * because every reservation covering this complete node also covers both
+     * of its halves.</p>
+     */
+    public void split() {
+        if (hasFirstHalf() || hasSecondHalf()) {
+            return;
+        }
+        Instant middle = getMiddle();
+        if (middle.equals(start) || middle.equals(end)) {
+            throw new IllegalStateException("The node interval is too small to split");
+        }
+        firstHalf = new ReservationTreeNode(start, middle);
+        secondHalf = new ReservationTreeNode(middle, end);
+        firstHalf.coveringReservationCount = coveringReservationCount;
+        secondHalf.coveringReservationCount = coveringReservationCount;
     }
 }
