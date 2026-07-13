@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 /**
- * Represents a node in a dynamic reservation segment tree
+ * Represents a node in a dynamic reservation segment tree.
  */
 public class ReservationTreeNode {
 

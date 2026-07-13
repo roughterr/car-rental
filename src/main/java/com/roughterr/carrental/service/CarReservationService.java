@@ -1,5 +1,6 @@
 package com.roughterr.carrental.service;
 
+import com.roughterr.carrental.domain.CarReservationRequest;
 import com.roughterr.carrental.domain.CarType;
 import com.roughterr.carrental.domain.ReservationResult;
 import com.roughterr.carrental.domain.ReservationTreeNode;
@@ -45,12 +46,7 @@ public class CarReservationService {
      */
     public ReservationResult reserveCar(CarType carType, Instant pickupDate, Instant returnDate) {
         ReservationTreeNode root = reservationTrees.get(carType);
-        int totalCarNumber;
-        try {
-            totalCarNumber = carInventoryService.getNumberOfCars(carType, pickupDate, returnDate);
-        } catch (IllegalArgumentException illegalArgumentException) {
-            return new ReservationResult.InvalidCarReservationRequest();
-        }
+        int totalCarNumber = carInventoryService.getNumberOfCars(new CarReservationRequest(carType, pickupDate, returnDate));
         //TODO
 
         return new ReservationResult.CarNotAvaiable();

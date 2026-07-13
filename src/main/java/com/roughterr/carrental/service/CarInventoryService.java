@@ -1,5 +1,6 @@
 package com.roughterr.carrental.service;
 
+import com.roughterr.carrental.domain.CarReservationRequest;
 import com.roughterr.carrental.domain.CarType;
 
 import java.time.Instant;
@@ -32,21 +33,19 @@ public class CarInventoryService {
      * implementations may support changes to the fleet over time, such as adding
      * or removing vehicles.</p>
      *
-     * @param carType type of car
-     * @param from    inclusive start of the interval
-     * @param to      exclusive end of the interval
+     * @param request car reservation request data
      * @return minimum number of cars available during the interval
      * @throws NullPointerException     if any argument is {@code null}
      * @throws IllegalArgumentException if {@code from} is not before {@code to}
      */
-    public int getNumberOfCars(CarType carType, Instant from, Instant to) {
-        Objects.requireNonNull(carType, "carType must not be null");
-        Objects.requireNonNull(from, "from must not be null");
-        Objects.requireNonNull(to, "to must not be null");
-        if (!from.isBefore(to)) {
+    public int getNumberOfCars(CarReservationRequest request) {
+        Objects.requireNonNull(request.carType(), "carType must not be null");
+        Objects.requireNonNull(request.pickupDate(), "from must not be null");
+        Objects.requireNonNull(request.returnDate(), "to must not be null");
+        if (!request.pickupDate().isBefore(request.returnDate())) {
             throw new IllegalArgumentException("'from' must be before 'to'");
         }
         // TODO Consider changes to the fleet over time.
-        return fleetSize.get(carType);
+        return fleetSize.get(request.carType());
     }
 }
